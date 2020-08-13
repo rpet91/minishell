@@ -6,7 +6,7 @@
 /*   By: thvan-de <thvan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/06/29 11:49:44 by thvan-de      #+#    #+#                 */
-/*   Updated: 2020/08/07 12:06:15 by rpet          ########   odam.nl         */
+/*   Updated: 2020/08/13 13:41:11 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,15 +66,23 @@ int			main(int argc, char **argv, char **env)
 		if (i == -1)
 			ft_error("Something went wrong reading the line\n");
 		list = lexer_line(line);
-		print_list(list);
+		if (!list && *line)
+			str_error("Something went wrong during the lexer\n");
+		if (!check_valid_meta(list))
+		{
+			ft_putstr_fd("Syntax error near unexpected token\n", 1);
+			continue ;
+		}
+		print_list(list); //lijst na de lexer
 		while (list)
 		{
-			printf(" list = %s\n", list->content);
+			printf("begin command: [%s]\n", list->content);
 			expand_func(list, &vars);
-			if (list == NULL)
-				str_error("Something went wrong during the lexer\n");
+			printf("test na expand\n");
 			command_list = parse_line(&list);
+			printf("test na parse line\n");
 			iterate_command(command_list, env, &vars);
+			printf("test na iterate command\n");
 		}
 	}
 	return (0);

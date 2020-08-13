@@ -6,7 +6,7 @@
 /*   By: thimovandermeer <thimovandermeer@studen      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/07/23 15:03:00 by thimovander   #+#    #+#                 */
-/*   Updated: 2020/08/04 13:21:32 by thvan-de      ########   odam.nl         */
+/*   Updated: 2020/08/13 10:46:49 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,14 @@ void 	ft_free_array(char **arr)
 
 void    print_list(t_list *list)
 {
-    int        i;
+    int			i;
+	int			len;
 
     i = 1;
     while (list)
     {
-        printf("Token%i: [%s]\n", i, list->content);
+		len = ft_strlen(list->content);
+        printf("Token %i: [%s] token_len: [%i]\n", i, list->content, len);
         list = list->next;
         i++;
     }

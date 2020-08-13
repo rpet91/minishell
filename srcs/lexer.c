@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/07/23 09:19:48 by rpet          #+#    #+#                 */
-/*   Updated: 2020/08/07 11:26:42 by rpet          ########   odam.nl         */
+/*   Updated: 2020/08/13 11:45:57 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,10 +80,10 @@ int		lexer_loop(char *line, t_lexer *lexer, t_list **list)
 
 void	init_lexer(t_lexer *lexer)
 {
-	lexer->quote = NO_QUOTE;
-	lexer->token = NOT_ACTIVE;
 	lexer->token_len = 0;
 	lexer->token_str = NULL;
+	lexer->quote = NO_QUOTE;
+	lexer->token = NOT_ACTIVE;
 }
 
 /*

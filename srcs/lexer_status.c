@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/08/07 11:06:14 by rpet          #+#    #+#                 */
-/*   Updated: 2020/08/07 11:37:48 by rpet          ########   odam.nl         */
+/*   Updated: 2020/08/13 08:30:28 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,8 @@ int		in_active_token(char *line, t_lexer *lexer, t_list **list)
 
 int		in_metachar_token(char *line, t_lexer *lexer, t_list **list)
 {
+	if (*line == '>')
+		return (1);
 	if (!add_token_to_list(lexer, list))
 		return (0);
 	if (*line == ' ' || *line == '\t')

@@ -6,7 +6,7 @@
 /*   By: thvan-de <thvan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/08/05 13:53:08 by thvan-de      #+#    #+#                 */
-/*   Updated: 2020/08/06 14:41:19 by thvan-de      ########   odam.nl         */
+/*   Updated: 2020/08/13 13:13:23 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,7 @@ void	iterate_command(t_list *command_list, char **env, t_vars *vars)
 
 	i = 0;
 	set_pipes(command_list, vars);
+	printf("test\n");
 	if (((t_command*)command_list->content)->redir != NO_REDIR)
 		open_files(((t_command*)command_list->content), vars, i);
 	count_commands(command_list, vars);
