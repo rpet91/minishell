@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/06/25 07:33:20 by rpet          #+#    #+#                 */
-/*   Updated: 2020/08/07 11:55:35 by rpet          ########   odam.nl         */
+/*   Updated: 2020/08/13 13:28:10 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ int				add_token_to_list(t_lexer *lexer, t_list **list);
 int				lexer_loop(char *line, t_lexer *lexer, t_list **list);
 void			init_lexer(t_lexer *lexer);
 t_list			*lexer_line(char *line);
+int				check_valid_meta(t_list *list);
 
 /*
 **		exec functions
