@@ -6,7 +6,7 @@
 /*   By: thvan-de <thvan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/08/05 13:53:08 by thvan-de      #+#    #+#                 */
-/*   Updated: 2020/08/13 13:13:23 by rpet          ########   odam.nl         */
+/*   Updated: 2020/08/20 09:23:14 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char	*get_bin_path(char *tmp, char *token)
 	return (NULL);
 }
 
-int		check_bins(t_command *command, char **env, t_vars *vars, int command_num)
+int		check_bins(t_command *cmd, char **env, t_vars *vars, int cmd_num)
 {
 	char			**tmp;
 	char			*bin_path;
@@ -47,9 +47,9 @@ int		check_bins(t_command *command, char **env, t_vars *vars, int command_num)
 		tmp = ft_split(env[i], '=');
 		if (ft_strncmp(tmp[0], "PATH", ft_strlen(tmp[0])) == 0)
 		{
-			bin_path = get_bin_path(tmp[1], command->args[0]);
+			bin_path = get_bin_path(tmp[1], cmd->args[0]);
 			if (bin_path != NULL)
-				return (ft_executable(bin_path, command, env, vars, command_num));
+				return (ft_executable(bin_path, cmd, env, vars, cmd_num));
 			else
 				return (-1);
 		}
@@ -59,7 +59,7 @@ int		check_bins(t_command *command, char **env, t_vars *vars, int command_num)
 }
 
 int		ft_executable(char *bin_path, t_command *command,
-char **env, t_vars *vars, int command_num)
+									char **env, t_vars *vars, int command_num)
 {
 	pid_t p_id;
 
@@ -117,7 +117,7 @@ int 	pipes_counter(t_list *command_list)
 	int i;
 
 	i = 0;
-	while (command_list != NULL)
+	while (command_list)
 	{
 		i++;
 		command_list = command_list->next;
@@ -159,7 +159,6 @@ void	iterate_command(t_list *command_list, char **env, t_vars *vars)
 
 	i = 0;
 	set_pipes(command_list, vars);
-	printf("test\n");
 	if (((t_command*)command_list->content)->redir != NO_REDIR)
 		open_files(((t_command*)command_list->content), vars, i);
 	count_commands(command_list, vars);
@@ -168,6 +167,11 @@ void	iterate_command(t_list *command_list, char **env, t_vars *vars)
 		if (is_builtin(((t_command*)command_list->content), vars, i) == 0 &&
 		check_bins(((t_command*)command_list->content), env, vars, i) == -1)
 			vars->ret = 127;
+		if (((t_command*)command_list->content)->err == ERROR)
+		{
+			ft_putstr_fd("Syntax error near unexpected token\n", 1);
+			return ;
+		}
 		command_list = command_list->next;
 		i++;
 	}

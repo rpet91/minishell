@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/07/23 09:19:48 by rpet          #+#    #+#                 */
-/*   Updated: 2020/08/13 11:45:57 by rpet          ########   odam.nl         */
+/*   Updated: 2020/08/20 10:58:20 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ t_list	*lexer_line(char *line)
 			return (NULL);
 		line++;
 	}
-	if (!add_token_to_list(&lexer, &list))
+	if (lexer.token != NOT_ACTIVE && !add_token_to_list(&lexer, &list))
 		return (NULL);
 	return (list);
 }
