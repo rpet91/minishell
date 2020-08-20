@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/06/25 07:33:20 by rpet          #+#    #+#                 */
-/*   Updated: 2020/08/13 13:28:10 by rpet          ########   odam.nl         */
+/*   Updated: 2020/08/19 14:02:53 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,11 @@
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <unistd.h>
+
+typedef enum	e_error {
+	NO_ERROR,
+	ERROR
+}				t_error;
 
 typedef enum	e_token {
 	NOT_ACTIVE,
@@ -68,9 +73,11 @@ typedef struct	s_parsing {
 	t_separator		cur_sep;
 	t_separator		prev_sep;
 	t_redirection	redir;
+	t_error			err;
 }				t_parsing;
 
 typedef struct	s_command {
+	t_error			err;
 	char			**args;
 	t_pipe			pipe;
 	t_redirection	redir;
@@ -108,8 +115,8 @@ int				check_valid_meta(t_list *list);
 */
 
 int				check_bins(t_command *command, char **env, t_vars *vars, int i);
-int				ft_executable(char *bin_path, t_command *command,
-				char **env, t_vars *vars, int command_num);
+int				ft_executable(char *bin_path, t_command *cmd,
+										char **env, t_vars *vars, int cmd_num);
 void			iterate_command(t_list *command_list, char **env, t_vars *vars);
 
 /*
