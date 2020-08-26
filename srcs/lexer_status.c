@@ -6,11 +6,12 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/08/07 11:06:14 by rpet          #+#    #+#                 */
-/*   Updated: 2020/08/13 08:30:28 by rpet          ########   odam.nl         */
+/*   Updated: 2020/08/25 11:32:56 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "libft/libft.h"
 
 /*
 **		Sets the token status to double quote or not active.

@@ -6,12 +6,17 @@
 /*   By: thvan-de <thvan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/08/05 13:53:08 by thvan-de      #+#    #+#                 */
-/*   Updated: 2020/08/20 09:23:14 by rpet          ########   odam.nl         */
+/*   Updated: 2020/08/26 11:07:29 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "libft/libft.h"
 #include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
 
 char	*get_bin_path(char *tmp, char *token)
 {
@@ -37,9 +42,9 @@ char	*get_bin_path(char *tmp, char *token)
 
 int		check_bins(t_command *cmd, char **env, t_vars *vars, int cmd_num)
 {
-	char			**tmp;
-	char			*bin_path;
-	int				i;
+	char		**tmp;
+	char		*bin_path;
+	int			i;
 
 	i = 0;
 	while (env[i] != '\0')
@@ -48,7 +53,7 @@ int		check_bins(t_command *cmd, char **env, t_vars *vars, int cmd_num)
 		if (ft_strncmp(tmp[0], "PATH", ft_strlen(tmp[0])) == 0)
 		{
 			bin_path = get_bin_path(tmp[1], cmd->args[0]);
-			if (bin_path != NULL)
+			if (bin_path)
 				return (ft_executable(bin_path, cmd, env, vars, cmd_num));
 			else
 				return (-1);
@@ -61,7 +66,7 @@ int		check_bins(t_command *cmd, char **env, t_vars *vars, int cmd_num)
 int		ft_executable(char *bin_path, t_command *command,
 									char **env, t_vars *vars, int command_num)
 {
-	pid_t p_id;
+	pid_t 		p_id;
 
 	p_id = fork();
 	if (p_id == 0)
@@ -92,7 +97,10 @@ int		ft_executable(char *bin_path, t_command *command,
 		exit(1);
 	}
 	else if (p_id < 0)
-		ft_error("failed to create child process\n");
+	{
+		ft_putstr_fd("Failed to create child process\n", 2);
+		return (-1);
+	}
 	wait(NULL);
 	if (command_num != vars->commands - 1)
 		close(vars->fd[command_num][1]);
@@ -103,13 +111,19 @@ int		ft_executable(char *bin_path, t_command *command,
 
 void	open_files(t_command *command, t_vars *vars, int command_num)
 {
+	printf("test2.1\n");
+	//printf("file_out: [%s]\n", command->file_out);
+	printf("cmd_num: [%i]\n", command_num);
 	if (command->redir == REDIR_IN)
 		vars->fd[command_num][0] = open(command->file_in, O_RDONLY);
+	printf("test2.2\n");
 	if (command->redir == REDIR_OUT_NEW)
-		vars->fd[command_num][1] = open(command->file_out, O_CREAT | O_TRUNC | O_RDWR, 0644);
+		vars->fd[command_num][1] = open(command->file_out,
+										O_CREAT | O_TRUNC | O_RDWR, 0644);
+	printf("test2.3\n");
 	if (command->redir == REDIR_OUT_APPEND)
-		vars->fd[command_num][1] = open(command->file_out, O_CREAT |
-		O_APPEND | O_RDWR, 0644);
+		vars->fd[command_num][1] = open(command->file_out,
+										O_CREAT | O_APPEND | O_RDWR, 0644);
 }
 
 int 	pipes_counter(t_list *command_list)
@@ -125,22 +139,30 @@ int 	pipes_counter(t_list *command_list)
 	return (i - 1);
 }
 
-void		set_pipes(t_list *command_list, t_vars *vars)
+int		set_pipes(t_list *command_list, t_vars *vars)
 {
-	int		pipes;
+	int		pipe_amount;
 	int		i;
 
-	pipes = pipes_counter(command_list);
-	if (pipes == 0)
-		return ;
-	vars->fd = (int**)malloc(sizeof(int*) * pipes);
+	pipe_amount = pipes_counter(command_list);
+	if (pipe_amount == 0)
+		return (1);
+	vars->fd = (int**)malloc(sizeof(int*) * pipe_amount);
+	if (!vars->fd)
+		return (0);
 	i = 0;
-	while (i < pipes)
+	while (i < pipe_amount)
 	{
 		vars->fd[i] = malloc(sizeof(int) * 2);
+		if (!vars->fd[i])
+		{
+			free_int_array(vars->fd);
+			return (0);
+		}
 		pipe(vars->fd[i]);
 		i++;
 	}
+	return (1);
 }
 
 void	count_commands(t_list *command_list, t_vars *vars)
@@ -158,7 +180,8 @@ void	iterate_command(t_list *command_list, char **env, t_vars *vars)
 	int i;
 
 	i = 0;
-	set_pipes(command_list, vars);
+	if(!set_pipes(command_list, vars))
+		return ;
 	if (((t_command*)command_list->content)->redir != NO_REDIR)
 		open_files(((t_command*)command_list->content), vars, i);
 	count_commands(command_list, vars);
@@ -169,7 +192,7 @@ void	iterate_command(t_list *command_list, char **env, t_vars *vars)
 			vars->ret = 127;
 		if (((t_command*)command_list->content)->err == ERROR)
 		{
-			ft_putstr_fd("Syntax error near unexpected token\n", 1);
+			ft_putstr_fd("Syntax error near unexpected token\n", 2);
 			return ;
 		}
 		command_list = command_list->next;

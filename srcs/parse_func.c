@@ -6,11 +6,13 @@
 /*   By: thimovandermeer <thimovandermeer@studen      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/07/23 15:04:51 by thimovander   #+#    #+#                 */
-/*   Updated: 2020/08/20 14:00:25 by rpet          ########   odam.nl         */
+/*   Updated: 2020/08/26 11:15:52 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "libft/libft.h"
+#include <stdlib.h>
 
 t_separator		check_seperator(char *str)
 {
@@ -31,7 +33,7 @@ int				get_length(t_parsing *parser)
 	prev = NO_REDIR;
 	tmp = parser->list;
 	arg_count = 0;
-	while (tmp != NULL && !check_seperator(tmp->content))
+	while (tmp && check_seperator(tmp->content) == NO_SEP)
 	{
 		arg_count++;
 		prev = current;
@@ -69,6 +71,7 @@ t_list			*make_item(int arg_count)
 	}
 	command->args[arg_count] = NULL;
 	command->pipe = NO_PIPE;
+	command->redir = NO_REDIR;
 	command->err = NO_ERROR;
 	return (tmp);
 }

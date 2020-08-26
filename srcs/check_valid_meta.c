@@ -6,11 +6,12 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/08/13 13:14:43 by rpet          #+#    #+#                 */
-/*   Updated: 2020/08/13 13:42:11 by rpet          ########   odam.nl         */
+/*   Updated: 2020/08/25 11:35:46 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "libft/libft.h"
 
 int		check_valid_meta(t_list *list)
 {

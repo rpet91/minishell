@@ -6,11 +6,13 @@
 /*   By: thimovandermeer <thimovandermeer@studen      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/07/23 15:03:00 by thimovander   #+#    #+#                 */
-/*   Updated: 2020/08/13 10:46:49 by rpet          ########   odam.nl         */
+/*   Updated: 2020/08/26 08:54:14 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "libft/libft.h"
+#include <unistd.h>
 
 void	ft_error(char *str)
 {
@@ -36,6 +38,22 @@ int 	ft_occurence(char *line, char c)
 	return (occ);
 }
 
+void	free_int_array(int **arr)
+{
+	int	i;
+
+	i = 0;
+	if (!arr)
+		return ;
+	while (arr[i])
+	{
+		free(arr[i]);
+		i++;
+	}
+	free(arr);
+	arr = NULL;
+}
+
 void 	ft_free_array(char **arr)
 {
 	int i;
@@ -43,12 +61,12 @@ void 	ft_free_array(char **arr)
 	i = 0;
 	if (!arr)
 		return ;
-	while(arr[i])
+	while (arr[i])
 	{
 		free(arr[i]);
 		i++;
 	}
-	free (arr);
+	free(arr);
 	arr = NULL;
 }
 
@@ -61,7 +79,7 @@ void    print_list(t_list *list)
     while (list)
     {
 		len = ft_strlen(list->content);
-        printf("Token %i: [%s] token_len: [%i]\n", i, list->content, len);
+		printf("Token %i: [%s] token_len: [%i]\n", i, list->content, len);
         list = list->next;
         i++;
     }

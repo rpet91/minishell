@@ -6,11 +6,13 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/07/23 09:19:48 by rpet          #+#    #+#                 */
-/*   Updated: 2020/08/20 10:58:20 by rpet          ########   odam.nl         */
+/*   Updated: 2020/08/25 12:04:19 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "libft/libft.h"
+#include <stdlib.h>
 
 /*
 **		Looks for a metachar.

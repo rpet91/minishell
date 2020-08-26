@@ -6,11 +6,13 @@
 /*   By: thvan-de <thvan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/08/05 13:49:40 by thvan-de      #+#    #+#                 */
-/*   Updated: 2020/08/06 11:24:12 by thvan-de      ########   odam.nl         */
+/*   Updated: 2020/08/25 11:59:55 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "libft/libft.h"
+#include <stdlib.h>
 
 int			get_length_var_name(char *replace)
 {
@@ -24,9 +26,9 @@ int			get_length_var_name(char *replace)
 
 void		expand_func(t_list *list, t_vars *vars)
 {
-	char	*token;
-	char	*new;
-	t_quote	quote;
+	char		*token;
+	char		*new;
+	t_quote		quote;
 
 	quote = NO_QUOTE;
 	while (list != NULL && ft_strcmp(list->content , ";"))
