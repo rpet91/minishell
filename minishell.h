@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/06/25 07:33:20 by rpet          #+#    #+#                 */
-/*   Updated: 2020/08/19 14:02:53 by rpet          ########   odam.nl         */
+/*   Updated: 2020/08/26 08:53:50 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,8 @@
 # define MINISHELL_H
 
 # include "libft/libft.h"
+# include <stddef.h>
 # include <stdio.h> //norm
-# include <unistd.h>
-# include <sys/wait.h>
-# include <sys/types.h>
-# include <sys/stat.h>
-# include <unistd.h>
 
 typedef enum	e_error {
 	NO_ERROR,
@@ -116,7 +112,7 @@ int				check_valid_meta(t_list *list);
 
 int				check_bins(t_command *command, char **env, t_vars *vars, int i);
 int				ft_executable(char *bin_path, t_command *cmd,
-										char **env, t_vars *vars, int cmd_num);
+								char **env, t_vars *vars, int cmd_num);
 void			iterate_command(t_list *command_list, char **env, t_vars *vars);
 
 /*
@@ -125,6 +121,7 @@ void			iterate_command(t_list *command_list, char **env, t_vars *vars);
 
 void			ft_error(char *str);
 int				ft_occurence(char *line, char c);
+void			free_int_array(int **arr);
 void			ft_free_array(char **arr);
 void			print_list(t_list *list);
 void			str_error(char *str);
@@ -149,7 +146,7 @@ void			init_envv(char **envv, t_vars *vars);
 **		pipe handling functions
 */
 void			pipe_handling(t_command *command, char *bin_path,
-				char **env, pid_t p_id);
+								char **env, pid_t p_id);
 
 /*
 **		expand_func.c
@@ -160,7 +157,6 @@ char			*create_new_token(char *str1, char *str2, int len);
 char			*expand_var(char *replace, t_vars *vars, t_quote quote);
 void			expand_func(t_list *list, t_vars *vars);
 int				get_length_var_name(char *replace);
-
 int				cd_func(t_command *command);
 int				echo_func(t_command *command);
 int				env_func(t_command *command);
@@ -168,7 +164,7 @@ int				exit_func(t_command *command);
 int				export_func(t_command *command);
 int				pwd_func(t_command *command);
 int				unset_func(t_command *command);
-void			command_prompt();
+void			command_prompt(void);
 void			command_handler(int sig_num);
 void			fork_handler(int sig_num);
 int				is_builtin(t_command *command, t_vars *vars, int i);
