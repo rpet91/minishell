@@ -6,7 +6,7 @@
 #    By: rpet <marvin@codam.nl>                       +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/06/24 11:54:19 by rpet          #+#    #+#                  #
-#    Updated: 2020/07/23 14:58:36 by thimovander   ########   odam.nl          #
+#    Updated: 2020/09/02 07:38:15 by rpet          ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,12 +19,13 @@ OBJS = $(addprefix $(OBJSDIR),$(SRCNAMES:.c=.o))
 LIBFTDIR = libft/
 LIBFT = libft.a
 LIBFTDIR = libft/
+INC = includes/
 
 all: $(NAME)
 
 $(OBJSDIR)%.o: $(SRCSDIR)%.c
 	@mkdir -p objs
-	@gcc $(FLAGS) -I. -c $< -o $@
+	@gcc $(FLAGS) -I$(INC) -c $< -o $@
 
 $(LIBFT):
 	cd $(LIBFTDIR) && make && mv $(LIBFT) ..
