@@ -6,12 +6,12 @@
 /*   By: thimovandermeer <thimovandermeer@studen      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/07/23 15:04:51 by thimovander   #+#    #+#                 */
-/*   Updated: 2020/08/26 11:15:52 by rpet          ########   odam.nl         */
+/*   Updated: 2020/09/02 14:21:19 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft/libft.h"
+#include "libft.h"
 #include <stdlib.h>
 
 t_separator		check_seperator(char *str)
@@ -56,18 +56,18 @@ t_list			*make_item(int arg_count)
 
 	command = malloc(sizeof(t_command));
 	if (!command)
-		return (NULL);
+		error_malloc();
 	tmp = ft_lstnew(command);
 	if (!tmp)
 	{
 		free(command);
-		return (NULL);
+		error_malloc();
 	}
 	command->args = (char**)malloc(sizeof(char *) * (arg_count + 1));
 	if (!command->args)
 	{
 		ft_free_array(command->args);
-		return (NULL);
+		error_malloc();
 	}
 	command->args[arg_count] = NULL;
 	command->pipe = NO_PIPE;
@@ -114,17 +114,11 @@ void			create_command(t_parsing *parser, t_list **command_list)
 {
 	int			arg_count;
 	t_list		*item;
-	int			j;
+	int			i;
 
 	arg_count = get_length(parser);
 	item = make_item(arg_count);
-	if (!item)
-	{
-		parser->err = ERROR;
-		ft_putstr_fd("Something went wrong creating link in list\n", 1);
-		return ;
-	}
-	j = 0;
+	i = 0;
 	while (parser->list &&
 	check_seperator((char *)parser->list->content) == NO_SEP)
 	{
@@ -134,15 +128,14 @@ void			create_command(t_parsing *parser, t_list **command_list)
 			if (!parser->list->next)
 			{
 				parser->err = ERROR;
-				ft_putstr_fd("Syntax error near unexpected token\n", 1);
-				return ;
+				return (error_syntax("newline"));
 			}
 			redir_handling(parser, item);
 		}
 		else
 		{
-			((t_command*)item->content)->args[j] = parser->list->content;
-			j++;
+			((t_command*)item->content)->args[i] = parser->list->content;
+			i++;
 		}
 		parser->list = parser->list->next;
 	}

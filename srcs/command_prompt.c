@@ -6,12 +6,12 @@
 /*   By: thvan-de <thvan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/08/05 14:03:50 by thvan-de      #+#    #+#                 */
-/*   Updated: 2020/08/25 11:44:23 by rpet          ########   odam.nl         */
+/*   Updated: 2020/09/02 07:39:05 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft/libft.h"
+#include "libft.h"
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>

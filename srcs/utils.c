@@ -6,21 +6,13 @@
 /*   By: thimovandermeer <thimovandermeer@studen      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/07/23 15:03:00 by thimovander   #+#    #+#                 */
-/*   Updated: 2020/08/26 08:54:14 by rpet          ########   odam.nl         */
+/*   Updated: 2020/09/03 08:46:38 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft/libft.h"
+#include "libft.h"
 #include <unistd.h>
-
-void	ft_error(char *str)
-{
-	write(1, "\e[31mERROR\n", 13);
-	write(1, "\e[33m", 5);
-	write(1, str, ft_strlen(str) + 1);
-	exit(1);
-}
 
 int 	ft_occurence(char *line, char c)
 {
@@ -107,4 +99,20 @@ void    print_commands(t_list *command_list)
 		}
 		command_list = command_list->next;
 	}
+}
+
+char	*get_env(char **env, char *key)
+{
+	int		i;
+	int		key_len;
+
+	i = 0;
+	key_len = ft_strlen(key);
+	while (env[i])
+	{
+		if (!ft_strncmp(env[i], key, key_len) && env[i][key_len] == '=')
+			return (env[i] + key_len + 1);
+		i++;
+	}
+	return (NULL);
 }

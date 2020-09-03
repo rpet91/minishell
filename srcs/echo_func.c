@@ -6,12 +6,13 @@
 /*   By: thvan-de <thvan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/08/05 14:04:34 by thvan-de      #+#    #+#                 */
-/*   Updated: 2020/08/25 11:44:53 by rpet          ########   odam.nl         */
+/*   Updated: 2020/09/02 08:44:35 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft/libft.h"
+#include "libft.h"
+#include <stdlib.h>
 
 char	*create_string(char **tokens)
 {
@@ -23,6 +24,8 @@ char	*create_string(char **tokens)
 	{
 		tokens[i] = ft_strtrim(tokens[i], "\' \"");
 		result = ft_strjoin(tokens[i], tokens[i + 1]);
+		if (!result)
+			error_malloc();
 		i++;
 	}
 	return (result);
@@ -35,5 +38,5 @@ int		echo_func(t_command *command)
 	str = create_string(command->args);
 	if (command->args[1])
 		ft_putstr_fd(str, 1);
-	return (0);
+	return (1);
 }

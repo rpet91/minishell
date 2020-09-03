@@ -6,12 +6,12 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/07/23 09:19:48 by rpet          #+#    #+#                 */
-/*   Updated: 2020/08/25 12:04:19 by rpet          ########   odam.nl         */
+/*   Updated: 2020/09/02 11:06:57 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft/libft.h"
+#include "libft.h"
 #include <stdlib.h>
 
 /*
@@ -31,29 +31,28 @@ int		check_metachar(char *line)
 **		Adds a token to the list.
 */
 
-int		add_token_to_list(t_lexer *lexer, t_list **list)
+void	add_token_to_list(t_lexer *lexer, t_list **list)
 {
 	char	*token;
 	t_list	*element;
 
 	token = ft_substr(lexer->token_str, 0, lexer->token_len);
 	if (!token)
-		return (0);
+		error_malloc();
 	element = ft_lstnew(token);
 	if (!element)
 	{
 		free(token);
-		return (0);
+		error_malloc();
 	}
 	ft_lstadd_back(list, element);
-	return (1);
 }
 
 /*
 **		Checks where to split for tokens.
 */
 
-int		lexer_loop(char *line, t_lexer *lexer, t_list **list)
+void	lexer_loop(char *line, t_lexer *lexer, t_list **list)
 {
 	if (*line == '\'' && lexer->quote != DOUBLE_QUOTE)
 		found_single_quote(line, lexer);
@@ -62,18 +61,11 @@ int		lexer_loop(char *line, t_lexer *lexer, t_list **list)
 	if (lexer->token == NOT_ACTIVE)
 		outside_token(line, lexer);
 	else if (lexer->token == ACTIVE && lexer->quote == NO_QUOTE)
-	{
-		if (!in_active_token(line, lexer, list))
-			return (0);
-	}
+		in_active_token(line, lexer, list);
 	else if (lexer->token == METACHAR && lexer->quote == NO_QUOTE)
-	{
-		if (!in_metachar_token(line, lexer, list))
-			return (0);
-	}
+		in_metachar_token(line, lexer, list);
 	if (lexer->token != NOT_ACTIVE)
 		lexer->token_len++;
-	return (1);
 }
 
 /*
@@ -101,11 +93,10 @@ t_list	*lexer_line(char *line)
 	list = NULL;
 	while (*line)
 	{
-		if (!lexer_loop(line, &lexer, &list))
-			return (NULL);
+		lexer_loop(line, &lexer, &list);
 		line++;
 	}
-	if (lexer.token != NOT_ACTIVE && !add_token_to_list(&lexer, &list))
-		return (NULL);
+	if (lexer.token != NOT_ACTIVE)
+		add_token_to_list(&lexer, &list);
 	return (list);
 }
