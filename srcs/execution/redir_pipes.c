@@ -1,7 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   redir_pipes.c                                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: thvan-de <thvan-de@student.codam.nl>         +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2020/10/01 13:44:26 by thvan-de      #+#    #+#                 */
+/*   Updated: 2020/10/07 08:34:22 by rpet          ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
-#include <sys/stat.h> 
+#include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+
+/*
+**	function which creates an input redir file stream
+*/
 
 int		input_redir(t_command *command)
 {
@@ -26,6 +42,27 @@ int		input_redir(t_command *command)
 	return (0);
 }
 
+/*
+**	function which determines the append mode
+*/
+
+int		type_determination(t_command *command, t_list *tmp_out_mode)
+{
+	int		type;
+
+	if (command->fd_out != 1)
+		close(command->fd_out);
+	if (*((t_filemode*)tmp_out_mode->content) == APPEND)
+		type = O_APPEND;
+	else if (*((t_filemode*)tmp_out_mode->content) == TRUNC)
+		type = O_TRUNC;
+	return (type);
+}
+
+/*
+**	function which creates an out redir file stream
+*/
+
 int		output_redir(t_command *command)
 {
 	int		type;
@@ -39,16 +76,10 @@ int		output_redir(t_command *command)
 	while (tmp_file_out)
 	{
 		file = (char*)tmp_file_out->content;
-		if (command->fd_out != 1)
-			close(command->fd_out);
-		if (*((t_filemode*)tmp_out_mode->content) == APPEND)
-			type = O_APPEND;
-		else if (*((t_filemode*)tmp_out_mode->content) == TRUNC)
-			type = O_TRUNC;
+		type = type_determination(command, tmp_out_mode);
 		open_files(&command->fd_out, file, O_CREAT | type | O_WRONLY, 0644);
 		if (command->fd_out == -1)
 			return (1);
-		// error handling
 		tmp_file_out = tmp_file_out->next;
 		tmp_out_mode = tmp_out_mode->next;
 	}
@@ -59,6 +90,10 @@ int		output_redir(t_command *command)
 	}
 	return (0);
 }
+
+/*
+**	function which creates pipe file stream
+*/
 
 void	set_pipes(t_exec *exec, t_list *command_list)
 {

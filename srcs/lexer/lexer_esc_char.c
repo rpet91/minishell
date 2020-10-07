@@ -1,32 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   env_builtin.c                                      :+:    :+:            */
+/*   lexer_esc_char.c                                   :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: thvan-de <thvan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2020/10/01 13:41:17 by thvan-de      #+#    #+#                 */
-/*   Updated: 2020/10/05 09:49:34 by rpet          ########   odam.nl         */
+/*   Created: 2020/10/01 13:44:49 by thvan-de      #+#    #+#                 */
+/*   Updated: 2020/10/01 13:44:50 by thvan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft.h"
 
 /*
-** Driver function for env builtin
+**	this function searches for the escape char
 */
 
-int		env_func(t_vars *vars)
+void	found_escape_char(char *line, t_lexer *lexer)
 {
-	int	i;
-
-	vars->builtin = BUILTIN;
-	i = 0;
-	while (vars->env[i])
+	if (lexer->escape == ESCAPE)
+		lexer->escape = NO_ESCAPE;
+	else if (lexer->escape == NO_ESCAPE)
 	{
-		ft_putendl_fd(vars->env[i], 1);
-		i++;
+		lexer->escape = ESCAPE;
+		if (lexer->token == NOT_ACTIVE)
+		{
+			lexer->token = ACTIVE;
+			lexer->token_len = 0;
+			lexer->token_str = line;
+		}
 	}
-	return (0);
 }

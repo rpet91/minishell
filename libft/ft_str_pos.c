@@ -1,38 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   pwd_builtin.c                                      :+:    :+:            */
+/*   ft_str_pos.c                                       :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2020/09/01 13:50:00 by rpet          #+#    #+#                 */
-/*   Updated: 2020/10/05 09:50:48 by rpet          ########   odam.nl         */
+/*   Created: 2020/10/02 14:52:25 by rpet          #+#    #+#                 */
+/*   Updated: 2020/10/02 14:52:26 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-#include "libft.h"
-#include <unistd.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-
-/*
-**	Driver function for pwd builtin
-*/
-
-int		pwd_builtin(t_vars *vars)
+int		ft_str_pos(char *search_place, char search_val)
 {
-	char	cwd[PATH_MAX];
+	int i;
 
-	vars->builtin = BUILTIN;
-	ft_bzero(cwd, PATH_MAX);
-	if (!getcwd(cwd, sizeof(cwd)))
+	i = 0;
+	while (search_place[i])
 	{
-		ft_putendl_fd(strerror(errno), 2);
-		return (127);
+		if (search_place[i] == search_val)
+			return (i);
+		i++;
 	}
-	ft_putendl_fd(cwd, 0);
 	return (0);
 }

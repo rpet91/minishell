@@ -1,32 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   env_builtin.c                                      :+:    :+:            */
+/*   error_exec.c                                       :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: thvan-de <thvan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2020/10/01 13:41:17 by thvan-de      #+#    #+#                 */
-/*   Updated: 2020/10/05 09:49:34 by rpet          ########   odam.nl         */
+/*   Created: 2020/10/02 11:26:21 by thvan-de      #+#    #+#                 */
+/*   Updated: 2020/10/05 08:37:52 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
 #include "libft.h"
 
 /*
-** Driver function for env builtin
+**	this function gives a invalid command messages when called
 */
 
-int		env_func(t_vars *vars)
+void	error_str_error(char *arg, char *str_error)
 {
-	int	i;
-
-	vars->builtin = BUILTIN;
-	i = 0;
-	while (vars->env[i])
-	{
-		ft_putendl_fd(vars->env[i], 1);
-		i++;
-	}
-	return (0);
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(arg, 2);
+	ft_putstr_fd(": ", 2);
+	ft_putendl_fd(str_error, 2);
 }

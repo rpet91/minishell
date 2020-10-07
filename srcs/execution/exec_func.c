@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   exec_func.c                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: thvan-de <thvan-de@student.codam.nl>         +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2020/10/01 13:44:11 by thvan-de      #+#    #+#                 */
+/*   Updated: 2020/10/07 11:46:24 by rpet          ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include "libft.h"
 #include <fcntl.h>
@@ -7,57 +19,94 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <errno.h>
+#include <signal.h>
 
-void	executable(t_exec *exec, t_command *command, t_vars *vars)
-{
-	execve(exec->bin_path, command->args, vars->get_env);
-	// error handling wanneer path wel gevonden is maar niet uit kan voeren.
-	exit(126);
-}
+/*
+**	function which opens files with the given file type and mode
+*/
 
 void	open_files(int *fd, char *file, int type, mode_t mode)
 {
 	*fd = open(file, type, mode);
 	if (*fd == -1)
-		printf("gaat fout bij open files\n");
+		error_str_error(file, strerror(errno));
 }
 
-// void	signal_handling(t_exec *exec, )
-// {
-// 	waitpid()
-// }
+/*
+**	functions which waits for the child process to end
+*/
 
-void	is_internal(t_command *command, t_vars *vars, t_exec *exec)
+void	wait_process(t_vars *vars, t_exec *exec)
 {
-	int ret;
+	int		status;
 
-	if (!check_bins(command, vars, exec))
+	waitpid(exec->pid, &status, WUNTRACED);
+	if (WIFSIGNALED(status))
 	{
-		error_invalid_cmd(command->args[0], vars);
-		vars->ret = 127;
-		return ;
+		vars->signal = WTERMSIG(status);
+		vars->ret = vars->signal + 128;
 	}
-	exec->pid = fork();
-	if (exec->pid == 0)
-		executable(exec, command, vars);
-	if (exec->pid < 0)
-	{
-		free(exec->bin_path);
-		printf("gaat fout bij exec");		
-		return ;
-	}
-	// signal_handling();
-	waitpid(exec->pid, &ret, WUNTRACED);
+	if (WIFEXITED(status))
+		vars->ret = WEXITSTATUS(status);
 	if (exec->bin_path)
 		free(exec->bin_path);
 }
 
-void	exec_func(t_command *command, t_vars *vars, t_exec *exec)
+/*
+**	function which executes the builtin or internal function
+*/
+
+void	exec_command(t_command *command, t_vars *vars, t_exec *exec)
 {
-	// builtin uitvoeren
-	if (is_builtin(command, vars) == 1)
-		is_internal(command, vars, exec);
+	if (!command->args[0])
+		return ;
+	is_builtin(command, vars);
+	if (vars->builtin == BUILTIN)
+		return ;
+	if (!check_bins(command, vars, exec))
+	{
+		error_invalid_cmd(command->args[0], vars);
+		return ;
+	}
+	exec->pid = fork();
+	if (exec->pid == 0)
+	{
+		execve(exec->bin_path, command->args, vars->env);
+		error_str_error(command->args[0], strerror(errno));
+		exit(126);
+	}
+	if (exec->pid < 0)
+	{
+		free(exec->bin_path);
+		error_general("something went wrong during fork proces", vars);
+		return ;
+	}
+	wait_process(vars, exec);
 }
+
+/*
+**	function to duplicate an open fd and close it
+*/
+
+void	duplicate_fd(int tmp_fd[2])
+{
+	if (dup2(tmp_fd[READ_END], STDIN_FILENO) == -1)
+	{
+		ft_putendl_fd(strerror(errno), 2);
+		return ;
+	}
+	if (dup2(tmp_fd[WRITE_END], STDOUT_FILENO) == -1)
+	{
+		ft_putendl_fd(strerror(errno), 2);
+		return ;
+	}
+	close(tmp_fd[READ_END]);
+	close(tmp_fd[WRITE_END]);
+}
+
+/*
+**	main loop for execution of commands
+*/
 
 void	iterate_command(t_list *command_list, t_vars *vars)
 {
@@ -65,9 +114,12 @@ void	iterate_command(t_list *command_list, t_vars *vars)
 	int		tmp_fd[2];
 
 	exec.in = STDIN_FILENO;
+	signal(SIGINT, signal_exec);
+	signal(SIGQUIT, signal_exec);
 	exec.fd[WRITE_END] = STDOUT_FILENO;
 	while (command_list)
 	{
+		vars->signal = 0;
 		exec.bin_path = NULL;
 		tmp_fd[READ_END] = dup(STDIN_FILENO);
 		tmp_fd[WRITE_END] = dup(STDOUT_FILENO);
@@ -76,14 +128,11 @@ void	iterate_command(t_list *command_list, t_vars *vars)
 			return ;
 		if (output_redir(((t_command*)command_list->content)))
 			return ;
-		exec_func(((t_command*)command_list->content), vars, &exec);
+		exec_command(((t_command*)command_list->content), vars, &exec);
 		if (command_list->next)
 			exec.in = exec.fd[READ_END];
-		dup2(tmp_fd[READ_END], STDIN_FILENO);
-		dup2(tmp_fd[WRITE_END], STDOUT_FILENO);
-		close(tmp_fd[READ_END]);
-		close(tmp_fd[WRITE_END]);
-		// signal handling hier voor quit etc
+		duplicate_fd(tmp_fd);
+		signal_write_exec(vars);
 		command_list = command_list->next;
 	}
 }

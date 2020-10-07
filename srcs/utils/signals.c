@@ -3,25 +3,49 @@
 /*                                                        ::::::::            */
 /*   signals.c                                          :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: rpet <marvin@codam.nl>                       +#+                     */
+/*   By: thvan-de <thvan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2020/09/03 08:24:47 by rpet          #+#    #+#                 */
-/*   Updated: 2020/09/03 08:37:18 by rpet          ########   odam.nl         */
+/*   Created: 2020/10/01 13:47:05 by thvan-de      #+#    #+#                 */
+/*   Updated: 2020/10/07 11:23:13 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "libft.h"
+#include <signal.h>
 
-void		ctrl_c(int signal)
+/*
+**	function which is handles when ctrl-c or ctrl-\ is registered
+*/
+
+void		signal_handler(int sig_num)
 {
-	(void)signal;
-	ft_putendl_fd("\b\b  ", 1);
-	command_prompt();
+	if (sig_num == SIGINT)
+	{
+		ft_putendl_fd("\b\b  ", 1);
+		command_prompt();
+	}
+	if (sig_num == SIGQUIT)
+		ft_putstr_fd("\b\b  \b\b", 1);
 }
 
-void		ctrl_esc(int signal)
+/*
+**	function which activates while in a exec where it shouldn't give a prompt
+*/
+
+void		signal_exec(int sig_num)
 {
-	(void)signal;
-	ft_putstr_fd("\b\b  \b\b", 1);
+	signal(sig_num, signal_exec);
+}
+
+/*
+**	function which gives the correct output while in a exec like cat
+*/
+
+void		signal_write_exec(t_vars *vars)
+{
+	if (vars->signal == SIGINT)
+		ft_putendl_fd("", 1);
+	if (vars->signal == SIGQUIT)
+		ft_putendl_fd("Quit: 3", 1);
 }

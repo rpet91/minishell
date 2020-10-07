@@ -5,8 +5,8 @@
 /*                                                     +:+                    */
 /*   By: thvan-de <thvan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2020/08/05 14:03:50 by thvan-de      #+#    #+#                 */
-/*   Updated: 2020/09/22 11:35:02 by thvan-de      ########   odam.nl         */
+/*   Created: 2020/10/01 13:46:43 by thvan-de      #+#    #+#                 */
+/*   Updated: 2020/10/07 10:50:52 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,24 +16,36 @@
 #include <stdlib.h>
 #include <signal.h>
 
+/*
+**	this function is activated if the system gives a command signal
+*/
+
 void	command_handler(int sig_num)
 {
 	if (sig_num == SIGINT)
 	{
 		ft_putstr_fd("\n", 1);
-		command_prompt();
 		signal(SIGINT, command_handler);
 	}
 }
+
+/*
+**	this function is activated if the system gives a fork signal
+*/
 
 void	fork_handler(int sig_num)
 {
 	if (sig_num == SIGINT)
 	{
 		ft_putstr_fd("\n", 1);
+		command_prompt();
 		signal(SIGINT, fork_handler);
 	}
 }
+
+/*
+**	this function creates the command prompt
+*/
 
 void	command_prompt(void)
 {

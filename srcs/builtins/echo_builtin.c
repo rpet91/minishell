@@ -6,7 +6,7 @@
 /*   By: thvan-de <thvan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/08/05 14:04:34 by thvan-de      #+#    #+#                 */
-/*   Updated: 2020/09/07 15:44:28 by thimovander   ########   odam.nl         */
+/*   Updated: 2020/10/05 09:47:03 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,16 @@
 #include "libft.h"
 #include <stdlib.h>
 
-int		echo_builtin(t_command *command)
+/*
+**	driver function for echo builtin
+*/
+
+int		echo_builtin(t_command *command, t_vars *vars)
 {
 	int		i;
 	int		newline;
 
+	vars->builtin = BUILTIN;
 	newline = 1;
 	i = 1;
 	if (command->args[i] && ft_strcmp(command->args[i], "-n") == 0)

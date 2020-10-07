@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   utils.c                                            :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: thimovandermeer <thimovandermeer@studen      +#+                     */
+/*   By: thvan-de <thvan-de@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2020/07/23 15:03:00 by thimovander   #+#    #+#                 */
-/*   Updated: 2020/09/24 14:19:17 by rpet          ########   odam.nl         */
+/*   Created: 2020/10/01 13:47:09 by thvan-de      #+#    #+#                 */
+/*   Updated: 2020/10/02 09:28:47 by thvan-de      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,70 +14,9 @@
 #include "libft.h"
 #include <unistd.h>
 
-int 	ft_occurence(char *line, char c)
-{
-	int i;
-	int occ;
-
-	i = 0;
-	occ = 0;
-	while (line[i] != '\0')
-	{
-		if (line[i] == c)
-			occ++;
-		i++;
-	}
-	return (occ);
-}
-
-/*void	free_int_array(int **arr)
-{
-	int	i;
-
-	i = 0;
-	if (!arr)
-		return ;
-	while (arr[i])
-	{
-		free(arr[i]);
-		i++;
-	}
-	free(arr);
-	arr = NULL;
-}
+/*
+**	function which returns the environments
 */
-
-
-void    print_list(t_list *list)
-{
-    int			i;
-	int			len;
-
-    i = 1;
-    while (list)
-    {
-		len = ft_strlen(list->content);
-		printf("Token %i: [%s] token_len: [%i]\n", i, list->content, len);
-        list = list->next;
-        i++;
-    }
-}
-
-void    print_commands(t_list *command_list)
-{
-	int		i;
-
-	while (command_list)
-	{
-		i = 0;
-		while (((t_command*)command_list->content)->args[i] != '\0')
-		{
-			printf("args: [%s]\n", ((t_command*)command_list->content)->args[i]);
-			i++;
-		}
-		command_list = command_list->next;
-	}
-}
 
 char	*get_env(char **env, char *key)
 {
@@ -95,20 +34,31 @@ char	*get_env(char **env, char *key)
 	return (NULL);
 }
 
+/*
+**	function which sets the environment
+*/
+
 char	**set_new_env(char **array, int length)
 {
 	int		i;
 	char	**tmp_list;
 
 	tmp_list = (char **)malloc(sizeof(char*) * (length + 1));
+	if (tmp_list == NULL)
+		error_malloc();
 	i = 0;
 	while (array[i])
 	{
 		tmp_list[i] = ft_strdup(array[i]);
 		i++;
 	}
+	tmp_list[i] = NULL;
 	return (tmp_list);
 }
+
+/*
+**	function which sort a string array alphabatically
+*/
 
 char	**bubblesort(char **array, int length)
 {
