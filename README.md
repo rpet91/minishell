@@ -4,3 +4,4 @@ My eight project of the 42 school Codam. This is the first team project in the C
 
 Compile with ```make``` and run the program to start.
 
+<img width="202" alt="success100" src="https://user-images.githubusercontent.com/57190868/138845369-27832915-0108-4829-aae1-e512a9ee34e1.png">
